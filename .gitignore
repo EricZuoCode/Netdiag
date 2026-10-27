@@ -1,5 +1,6 @@
 # 编译产物
 netdiag
+dist/
 
 # 排障结果文件
 *-netdiag-output.txt
