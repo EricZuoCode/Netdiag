@@ -24,12 +24,16 @@ type task struct {
 }
 
 // fillTaskDefaults 补齐任务缺省值：
-// url 未显式指定时，根据目标与端口构造 URL——目标已携带 http:// 或 https:// 协议则直接使用（不拼接）；
+// 仅 curl 与 all 需要构造 URL——目标已携带 http:// 或 https:// 协议则直接使用（不拼接）；
 // 否则按端口推导协议：80/8080 等常见 HTTP 端口使用 http，其余（含 443/8443 与默认 443）使用 https；
 // 用户通过 -u 显式指定 URL（可自行携带 http/https）时以用户为准。
+// ping / dns / telnet / tcpdump 仅使用域名/IP 与端口，不使用 URL，无需推导。
 func fillTaskDefaults(t *task) {
-	if t.url == "" {
-		t.url = buildURL(t.target, t.port)
+	switch t.command {
+	case "curl", "all":
+		if t.url == "" {
+			t.url = buildURL(t.target, t.port)
+		}
 	}
 }
 
