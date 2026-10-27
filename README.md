@@ -18,21 +18,23 @@
 
 ```
 netdiag/
-├── go.mod        模块定义
-├── main.go       入口、命令行参数解析、子命令分发
-├── batch.go      任务模型、文件解析、并发调度
-├── output.go     结果文件写入封装、历史输出清理
-├── ping.go       ping 连通性测试
-├── dns.go        DNS 解析探测
-├── telnet.go     端口连通性探测
-├── curl.go       HTTP/HTTPS 探测
-├── capture.go    tcpdump 抓包
-└── netdiag       编译后产物（可直接运行）
+├── .github/workflows/release.yml    GitHub Actions 自动发版
+├── .gitignore                       忽略编译产物与结果文件
+├── go.mod                           模块定义
+├── main.go                          入口、命令行参数解析、子命令分发
+├── batch.go                         任务模型、文件解析、并发调度
+├── output.go                        结果文件写入封装、历史输出清理
+├── ping.go                          ping 连通性测试
+├── dns.go                           DNS 解析探测
+├── telnet.go                        端口连通性探测
+├── curl.go                          HTTP/HTTPS 探测
+├── capture.go                       tcpdump 抓包
+└── README.md                        使用说明
 ```
 
 ## 构建
 
-若目录下已存在可直接运行的 `netdiag` 编译后产物，则无需重新构建，直接执行``netdiag``命令即可。仅当需要从源码重新编译时才需执行：
+若目录下已存在可直接运行的 `netdiag` 编译后产物，则无需重新构建，直接执行 `netdiag` 命令即可。仅当需要从源码重新编译时才需执行：
 
 ```bash
 cd netdiag
