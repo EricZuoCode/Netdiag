@@ -35,8 +35,8 @@ var validCommands = map[string]bool{
 }
 
 func init() {
-	flag.StringVar(&target, "t", "www.qq.com", "目标主机 / IP 地址（支持逗号分隔多个）")
-	flag.StringVar(&target, "target", "www.qq.com", "目标主机 / IP 地址（支持逗号分隔多个）")
+	flag.StringVar(&target, "t", "www.qq.com", "目标主机 / IP 地址（支持逗号分隔多个，可携带 http(s)://）")
+	flag.StringVar(&target, "target", "www.qq.com", "目标主机 / IP 地址（支持逗号分隔多个，可携带 http(s)://）")
 
 	flag.StringVar(&port, "p", "443", "目标端口")
 	flag.StringVar(&port, "port", "443", "目标端口")
@@ -129,7 +129,7 @@ func usage() {
     netdiag telnet -t 1.2.3.4 -p 8080
 
 参数:
-  -t, --target string      目标主机 / IP 地址，逗号分隔多个 (默认 www.qq.com)
+  -t, --target string      目标主机 / IP 地址，逗号分隔多个，可携带 http(s):// (默认 www.qq.com)
   -p, --port string        目标端口 (默认 443)
   -u, --url string         curl 探测的目标 URL (默认按端口推导：80→http，其余→https)
   -c, --count int          ping 发包数量 / tcpdump 抓包数量 (默认 10，tcpdump 默认 100)
