@@ -48,7 +48,7 @@ go build -o netdiag .
 | -------------------- | ------------------------------------------------ | ----------------------------------- |
 | `-t, --target`     | 目标主机 / IP，逗号分隔多个                      | `www.qq.com`                      |
 | `-p, --port`       | 目标端口                                         | `443`                             |
-| `-u, --url`        | curl 探测的目标 URL                              | `https://目标主机`                |
+| `-u, --url`        | curl 探测的目标 URL                              | 按端口推导（80→http，其余→https） |
 | `-c, --count`      | ping 发包数量 / tcpdump 抓包数量               | `10`（tcpdump 默认 100）          |
 | `-W, --timeout`    | 超时时间（秒）                                   | `5`                               |
 | `-o, --output`     | 结果输出文件路径                                 | `<unix时间戳>-netdiag-output.txt` |

@@ -23,10 +23,22 @@ type task struct {
 	curlFlags string // curl 参数
 }
 
-// fillTaskDefaults 补齐任务缺省值：url 未指定时按目标主机推导为 https 协议。
+// fillTaskDefaults 补齐任务缺省值：
+// url 未显式指定时，根据端口推导协议——80/8080 等常见 HTTP 端口使用 http，其余（含 443/8443 与默认 443）使用 https；
+// 用户通过 -u 显式指定 URL（可自行携带 http/https）时以用户为准。
 func fillTaskDefaults(t *task) {
 	if t.url == "" {
-		t.url = "https://" + t.target
+		t.url = schemeForPort(t.port) + "://" + t.target
+	}
+}
+
+// schemeForPort 根据端口推导协议：常见 HTTP 端口返回 http，其余默认 https。
+func schemeForPort(port string) string {
+	switch port {
+	case "80", "8080", "8000", "8888":
+		return "http"
+	default:
+		return "https"
 	}
 }
 
