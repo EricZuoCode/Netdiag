@@ -14,14 +14,14 @@ netdiag 是一个编译好的 Go 命令行工具，封装客户端系统自带�
 
 本技能目录即 netdiag 项目根目录（源码与产物同在此处）：
 
-- 项目根目录：`/Users/zuoxuchen/.workbuddy/skills/netdiag/`
+- 项目根目录：本技能所在目录（SKILL.md 同级）
 - 全平台交叉编译产物：`dist/`（Linux/macOS/Windows × amd64/arm64）
-- 本机（macOS arm64）可直接在根目录 `go build -o netdiag .` 编译
+- 可直接在根目录 `go build -o netdiag .` 编译
 
 执行方式：
 
 ```bash
-cd /Users/zuoxuchen/.workbuddy/skills/netdiag
+cd <本技能目录>
 go build -o netdiag .   # 若未编译，先构建
 ./netdiag <command> [flags]
 ```
