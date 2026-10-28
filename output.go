@@ -1,5 +1,7 @@
 package main
 
+// output.go —— 结果文件写入封装（追加模式、并发安全）与历史输出清理。
+
 import (
 	"fmt"
 	"io"
@@ -11,9 +13,9 @@ import (
 
 // resultWriter 封装结果文件的写入，追加模式，并发安全。
 type resultWriter struct {
-	path string
-	file *os.File
-	mu   sync.Mutex
+	path string     // 结果文件路径
+	file *os.File   // 底层文件句柄
+	mu   sync.Mutex // 互斥锁，保证并发写入安全
 }
 
 // newResultWriter 以追加模式打开（必要时创建）结果文件。

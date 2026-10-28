@@ -1,5 +1,7 @@
 package main
 
+// dns.go —— DNS 解析探测：dig + nslookup + Go 标准库本地解析摘要。
+
 import (
 	"fmt"
 	"io"

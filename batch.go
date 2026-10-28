@@ -1,5 +1,7 @@
 package main
 
+// batch.go —— 任务模型、缺省值补齐、文件解析与 goroutine 并发调度。
+
 import (
 	"bufio"
 	"bytes"

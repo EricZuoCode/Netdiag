@@ -1,5 +1,7 @@
 package main
 
+// ping.go —— ping 连通性测试（跨平台命令适配 + 统计信息解析）。
+
 import (
 	"fmt"
 	"io"
@@ -19,14 +21,15 @@ type pingStats struct {
 	MaxRTT      string
 }
 
+// 以下正则用于解析 ping 输出中的统计信息，兼容英文与中文系统环境。
 var (
-	reLossEn = regexp.MustCompile(`(\d+(?:\.\d+)?)%\s*packet loss`)
-	reLossZh = regexp.MustCompile(`(\d+(?:\.\d+)?)%\s*丢包`)
-	reSent   = regexp.MustCompile(`(\d+)\s+packets transmitted`)
-	reSentZh = regexp.MustCompile(`(\d+)\s+个(?:数据包)?已发送`)
-	reRecv   = regexp.MustCompile(`(\d+)\s+(?:packets )?received`)
-	reRecvZh = regexp.MustCompile(`(\d+)\s+个(?:数据包)?已接收`)
-	reRTT    = regexp.MustCompile(`(?:round-trip|rtt).*?=\s*([\d.]+)/([\d.]+)/([\d.]+)`)
+	reLossEn = regexp.MustCompile(`(\d+(?:\.\d+)?)%\s*packet loss`)                         // 丢包率（英文）
+	reLossZh = regexp.MustCompile(`(\d+(?:\.\d+)?)%\s*丢包`)                                // 丢包率（中文）
+	reSent   = regexp.MustCompile(`(\d+)\s+packets transmitted`)                            // 已发送包数（英文）
+	reSentZh = regexp.MustCompile(`(\d+)\s+个(?:数据包)?已发送`)                             // 已发送包数（中文）
+	reRecv   = regexp.MustCompile(`(\d+)\s+(?:packets )?received`)                          // 已接收包数（英文）
+	reRecvZh = regexp.MustCompile(`(\d+)\s+个(?:数据包)?已接收`)                             // 已接收包数（中文）
+	reRTT    = regexp.MustCompile(`(?:round-trip|rtt).*?=\s*([\d.]+)/([\d.]+)/([\d.]+)`)    // 往返时延 min/avg/max
 )
 
 // buildPingCommand 根据当前操作系统构造系统 ping 命令及参数。

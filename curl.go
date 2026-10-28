@@ -1,5 +1,7 @@
 package main
 
+// curl.go —— 执行 curl HTTP/HTTPS 探测，收集整体返回信息。
+
 import (
 	"fmt"
 	"io"

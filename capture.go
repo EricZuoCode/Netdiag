@@ -1,5 +1,7 @@
 package main
 
+// capture.go —— tcpdump 抓包（仅 Linux/macOS，全局串行执行）。
+
 import (
 	"fmt"
 	"io"

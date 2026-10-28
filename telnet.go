@@ -1,5 +1,7 @@
 package main
 
+// telnet.go —— TCP 端口连通性探测（Go 原生拨号 + nc 交叉验证）。
+
 import (
 	"fmt"
 	"io"

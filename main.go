@@ -1,5 +1,7 @@
 package main
 
+// main.go —— 程序入口：命令行参数定义与解析、子命令分发、整体流程调度。
+
 import (
 	"flag"
 	"fmt"
