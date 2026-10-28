@@ -55,10 +55,10 @@ func runTcpdump(w io.Writer, host, port string, count int) {
 	pcapFile := fmt.Sprintf("%d-netdiag-tcpdump.pcap", time.Now().Unix())
 
 	args := []string{
-		"-nn",                     // 不解析主机名与端口名
-		"-s", "0",                 // snaplen 0：抓取全量包数据
+		"-nn",     // 不解析主机名与端口名
+		"-s", "0", // snaplen 0：抓取全量包数据
 		"-c", strconv.Itoa(count), // 抓包数量上限
-		"-w", pcapFile,            // 输出 pcap 文件
+		"-w", pcapFile, // 输出 pcap 文件
 		"host", host, "and", "port", port, // 过滤条件
 	}
 

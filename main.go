@@ -31,6 +31,7 @@ var validCommands = map[string]bool{
 	"dns":     true,
 	"telnet":  true,
 	"curl":    true,
+	"ws":      true,
 	"all":     true,
 	"batch":   true,
 	"tcpdump": true,
@@ -43,8 +44,8 @@ func init() {
 	flag.StringVar(&port, "p", "443", "目标端口")
 	flag.StringVar(&port, "port", "443", "目标端口")
 
-	flag.StringVar(&url, "u", "", "curl 探测的目标 URL（默认按端口推导：80→http，其余→https）")
-	flag.StringVar(&url, "url", "", "curl 探测的目标 URL（默认按端口推导：80→http，其余→https）")
+	flag.StringVar(&url, "u", "", "curl/ws 探测的目标 URL（默认按端口推导协议）")
+	flag.StringVar(&url, "url", "", "curl/ws 探测的目标 URL（默认按端口推导协议）")
 
 	flag.IntVar(&count, "c", 10, "ping 发包数量")
 	flag.IntVar(&count, "count", 10, "ping 发包数量")
@@ -106,6 +107,7 @@ func usage() {
   dns       执行 DNS 解析探测 (dig + nslookup)
   telnet    执行端口连通性探测
   curl      执行 HTTP/HTTPS 探测
+  ws        执行 WebSocket 握手探测（ws/wss）
   all       按顺序执行 ping -> dns -> telnet -> curl
   batch     从文件导入任务并并发执行
   tcpdump   执行抓包操作（仅 Linux/macOS，需指定域名与端口）
@@ -116,6 +118,7 @@ func usage() {
   netdiag dns -t www.qq.com
   netdiag telnet -t 1.2.3.4 -p 8080
   netdiag curl -u https://example.com/path
+  netdiag ws -u wss://example.com
   netdiag all -t www.qq.com -p 80 -u http://www.qq.com
   netdiag tcpdump -t www.qq.com -p 443
 
@@ -133,7 +136,7 @@ func usage() {
 参数:
   -t, --target string      目标主机 / IP 地址，逗号分隔多个，可携带 http(s):// (默认 www.qq.com)
   -p, --port string        目标端口 (默认 443)
-  -u, --url string         curl 探测的目标 URL (默认按端口推导：80→http，其余→https)
+  -u, --url string         curl/ws 探测的目标 URL (默认按端口推导协议)
   -c, --count int          ping 发包数量 / tcpdump 抓包数量 (默认 10，tcpdump 默认 100)
   -W, --timeout int        超时时间，单位秒 (默认 5)
   -o, --output string      结果输出文件路径 (默认 <unix时间戳>-netdiag-output.txt)

@@ -16,25 +16,33 @@ import (
 
 // task 表示一个待执行的探测任务，各字段覆盖 ping/dns/telnet/curl 所需参数。
 type task struct {
-	command   string // 子命令: ping / dns / telnet / curl / all / tcpdump
+	command   string // 子命令: ping / dns / telnet / curl / ws / all / tcpdump
 	target    string // 目标主机 / IP
 	port      string // 目标端口
 	url       string // curl 探测 URL
 	count     int    // ping 发包数量
 	timeout   int    // 超时时间（秒）
 	curlFlags string // curl 参数
+	selfCheck bool   // all 命令默认自检模式（未携带任何目标参数）
 }
 
 // fillTaskDefaults 补齐任务缺省值：
-// 仅 curl 与 all 需要构造 URL——目标已携带 http:// 或 https:// 协议则直接使用（不拼接）；
-// 否则按端口推导协议：80/8080 等常见 HTTP 端口使用 http，其余（含 443/8443 与默认 443）使用 https；
-// 用户通过 -u 显式指定 URL（可自行携带 http/https）时以用户为准。
+// 仅 curl / all / ws 需要构造 URL：
+//
+//	curl / all —— 目标已携带 http:// 或 https:// 则直接使用（不拼接），否则按端口推导 http/https；
+//	ws         —— 目标已携带 ws:// 或 wss:// 则直接使用（不拼接），否则按端口推导 ws/wss；
+//
+// 用户通过 -u 显式指定 URL（可自行携带协议）时以用户为准。
 // ping / dns / telnet / tcpdump 仅使用域名/IP 与端口，不使用 URL，无需推导。
 func fillTaskDefaults(t *task) {
 	switch t.command {
 	case "curl", "all":
 		if t.url == "" {
 			t.url = buildURL(t.target, t.port)
+		}
+	case "ws":
+		if t.url == "" {
+			t.url = buildWSURL(t.target, t.port)
 		}
 	}
 }
@@ -59,6 +67,26 @@ func schemeForPort(port string) string {
 	}
 }
 
+// buildWSURL 根据目标与端口构造 WebSocket URL：
+// 目标已携带 ws:// 或 wss:// 协议前缀时直接返回（不拼接）；否则按端口推导 ws/wss 拼接。
+func buildWSURL(target, port string) string {
+	lower := strings.ToLower(target)
+	if strings.HasPrefix(lower, "ws://") || strings.HasPrefix(lower, "wss://") {
+		return target
+	}
+	return schemeForPortWS(port) + "://" + target
+}
+
+// schemeForPortWS 根据端口推导 WebSocket 协议：常见 HTTP 端口返回 ws，其余默认 wss。
+func schemeForPortWS(port string) string {
+	switch port {
+	case "80", "8080", "8000", "8888":
+		return "ws"
+	default:
+		return "wss"
+	}
+}
+
 // executeTask 执行单个任务，结果写入 w。
 func executeTask(w io.Writer, t task) {
 	timeoutDur := time.Duration(t.timeout) * time.Second
@@ -75,7 +103,19 @@ func executeTask(w io.Writer, t task) {
 		runPing(w, t.target, t.count, t.timeout)
 		runDNS(w, t.target)
 		runTelnetWithFallback(w, t.target, t.port, timeoutDur)
-		runCurl(w, t.url, t.curlFlags)
+		if t.selfCheck {
+			// 自检模式：http 与 ws 均执行（ws 使用公开自检端点）
+			runCurl(w, t.url, t.curlFlags)
+			runWebSocket(w, wsSelfCheckURL, timeoutDur)
+		} else if isWSURL(t.url) {
+			// 指定模式：按 URL 协议二选一，仅执行 ws 探测
+			runWebSocket(w, t.url, timeoutDur)
+		} else {
+			// 指定模式：按 URL 协议二选一，仅执行 http 探测
+			runCurl(w, t.url, t.curlFlags)
+		}
+	case "ws":
+		runWebSocket(w, t.url, timeoutDur)
 	case "tcpdump":
 		runTcpdump(w, t.target, t.port, t.count)
 	}
@@ -121,6 +161,8 @@ func buildTasksFromArgs(command string) []task {
 			count:     count,
 			timeout:   timeout,
 			curlFlags: curlFlags,
+			// all 命令未携带任何目标参数（-t/-u/-p）时视为自检模式
+			selfCheck: command == "all" && !flagSet("t", "target", "u", "url", "p", "port"),
 		}
 		fillTaskDefaults(&tk)
 		tasks = append(tasks, tk)

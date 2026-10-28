@@ -1,6 +1,6 @@
 # netdiag — CDN 场景网络基础排障工具
 
-一个基于 Go 编写的命令行小工具，封装客户端系统自带命令，用于 CDN 场景下的网络基础排障。支持 goroutine 并发，可一次对多个目标并发探测，也可从文件批量导入任务；除 ping/dns/telnet/curl 探测外，还支持 tcpdump 抓包（仅 Linux/macOS）。每次执行的探测结果按当前 unix 时间戳生成独立输出文件（`<unix时间戳>-netdiag-output.txt`），避免多次执行相互覆盖。
+一个基于 Go 编写的命令行小工具，封装客户端系统自带命令，用于 CDN 场景下的网络基础排障。支持 goroutine 并发，可一次对多个目标并发探测，也可从文件批量导入任务；除 ping/dns/telnet/curl 探测外，还支持 WebSocket 握手探测（ws/wss）与 tcpdump 抓包（仅 Linux/macOS）。每次执行的探测结果按当前 unix 时间戳生成独立输出文件（`<unix时间戳>-netdiag-output.txt`），避免多次执行相互覆盖。
 
 ## 功能
 
@@ -10,6 +10,7 @@
 | dns    | 执行 `dig` 与 `nslookup` 探测，验证域名解析是否正常，并补充本地解析摘要 | 系统 `dig` / `nslookup` |
 | telnet | 探测指定 IP 与端口的 TCP 连通性，并做 `nc` 交叉验证                       | Go 标准库 + 系统 `nc`     |
 | curl   | 执行 HTTP/HTTPS 探测（默认 `-I -k -v`），收集完整返回信息                 | 系统 `curl`               |
+| ws     | 执行 WebSocket 握手探测（ws/wss），仅握手不保持长连接                     | Go 标准库                |
 | tcpdump | 抓取指定域名与端口的网络包（仅 Linux/macOS），输出 pcap 文件               | 系统 `tcpdump`           |
 | 并发   | goroutine 并发执行，支持命令行多目标与文件批量导入                          | —                          |
 | 导出   | 结果按 unix 时间戳生成独立文件，并发落盘不交错                              | —                          |
@@ -28,6 +29,7 @@ netdiag/
 ├── dns.go                           DNS 解析探测
 ├── telnet.go                        端口连通性探测
 ├── curl.go                          HTTP/HTTPS 探测
+├── ws.go                            WebSocket 握手探测
 ├── capture.go                       tcpdump 抓包
 └── README.md                        使用说明
 ```
@@ -48,7 +50,7 @@ go build -o netdiag .
 | -------------------- | ------------------------------------------------ | ----------------------------------- |
 | `-t, --target`     | 目标主机 / IP，逗号分隔多个，可携带 http(s)://    | `www.qq.com`                      |
 | `-p, --port`       | 目标端口                                         | `443`                             |
-| `-u, --url`        | curl 探测的目标 URL                              | 按端口推导（80→http，其余→https） |
+| `-u, --url`        | curl/ws 探测的目标 URL                          | 按端口推导（80→http/ws，其余→https/wss） |
 | `-c, --count`      | ping 发包数量 / tcpdump 抓包数量               | `10`（tcpdump 默认 100）          |
 | `-W, --timeout`    | 超时时间（秒）                                   | `5`                               |
 | `-o, --output`     | 结果输出文件路径                                 | `<unix时间戳>-netdiag-output.txt` |
@@ -61,9 +63,9 @@ go build -o netdiag .
 
 ### 单项 / 全量探测
 
-> 首次使用或不确定工具是否正常时，可先执行 `./netdiag all`（不带参数，以默认值探测 www.qq.com）验证工具可正常运行、无报错；该命令无实际排障价值，仅用于可用性自检。
+> 首次使用或不确定工具是否正常时，可先执行 `./netdiag all`（不带参数，以默认值探测 www.qq.com 及公开 ws 端点）验证工具可正常运行、无报错；该命令无实际排障价值，仅用于可用性自检。
 
-`all` 不带参数为自检；带上 `-t` / `-p` / `-u` 等参数即按指定目标执行全部探测（ping → dns → telnet → curl）：
+`all` 不带参数为自检（ping → dns → telnet → curl + ws 全量探测）；带上参数时，按 URL 协议二选一执行 http 或 ws 探测（ping → dns → telnet → curl 或 ws）：
 
 ```bash
 ./netdiag all                                        # 自检：以默认值探测 www.qq.com，验证工具可用性
@@ -72,6 +74,7 @@ go build -o netdiag .
 ./netdiag dns -t www.qq.com                          # DNS 解析探测
 ./netdiag telnet -t 1.2.3.4 -p 8080                  # 端口连通性探测
 ./netdiag curl -u https://example.com                # HTTP/HTTPS 探测
+./netdiag ws -u wss://example.com                    # WebSocket 握手探测
 ```
 
 ### 抓包（tcpdump）
