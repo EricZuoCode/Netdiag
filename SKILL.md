@@ -12,14 +12,18 @@ netdiag 是一个编译好的 Go 命令行工具，封装客户端系统自带�
 
 ## 工具位置
 
-- 本机（macOS arm64）编译产物：`/Users/zuoxuchen/Desktop/File/代码/netdiag/netdiag`
-- 全平台交叉编译产物（Linux/macOS/Windows × amd64/arm64）：`/Users/zuoxuchen/Desktop/File/代码/netdiag/dist/`
-- 若目标机器无产物，源码位于 `/Users/zuoxuchen/Desktop/File/代码/netdiag/`，可 `go build -o netdiag .` 重新编译
+本技能目录即 netdiag 项目根目录（源码与产物同在此处）：
 
-执行方式（以本机产物为例）：
+- 项目根目录：`/Users/zuoxuchen/.workbuddy/skills/netdiag/`
+- 全平台交叉编译产物：`dist/`（Linux/macOS/Windows × amd64/arm64）
+- 本机（macOS arm64）可直接在根目录 `go build -o netdiag .` 编译
+
+执行方式：
 
 ```bash
-/Users/zuoxuchen/Desktop/File/代码/netdiag/netdiag <command> [flags]
+cd /Users/zuoxuchen/.workbuddy/skills/netdiag
+go build -o netdiag .   # 若未编译，先构建
+./netdiag <command> [flags]
 ```
 
 ## 子命令
