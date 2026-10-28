@@ -8,23 +8,9 @@ agent_created: true
 
 ## 概述
 
-netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcpdump）的 Go 命令行工具，用于 CDN 网络排障。本技能目录即项目根目录：源码、`dist/` 全平台产物、README.md 同在此处。
+netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcpdump）的 Go 命令行工具，用于 CDN 网络排障。全平台产物位于 `dist/`，完整文档见 README.md。
 
-## 工具位置
-
-- 项目根目录 = 本技能所在目录（SKILL.md 同级）
-- 全平台交叉编译产物：`dist/`（Linux/macOS/Windows × amd64/arm64）
-- 编译：在技能目录执行 `go build -o netdiag .`
-
-执行方式：
-
-```bash
-cd <本技能目录>
-go build -o netdiag .   # 若尚未编译，先构建
-./netdiag <command> [flags]
-```
-
-## 子命令
+## 功能
 
 | 命令 | 用途 |
 | --- | --- |
