@@ -1,5 +1,5 @@
 # 编译产物
-netdiag
+/netdiag
 dist/
 
 # 排障结果文件
