@@ -21,6 +21,7 @@
 netdiag/
 ├── .github/workflows/release.yml    GitHub Actions 自动发版
 ├── .gitignore                       忽略编译产物与结果文件
+├── SKILL.md                         技能说明（agent 调用入口）
 ├── go.mod                           模块定义
 ├── main.go                          入口、命令行参数解析、子命令分发
 ├── batch.go                         任务模型、文件解析、并发调度
