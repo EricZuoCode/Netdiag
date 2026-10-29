@@ -24,7 +24,6 @@ netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcp
 | `ws` | WebSocket 握手探测（ws/wss，不保持长连接） |
 | `all` | ping → dns → telnet → curl；自检含 ws，带参数 http/ws 二选一 |
 | `batch` | 从文件批量导入任务并发执行 |
-| `traceroute` | 路由路径追踪（traceroute / tracert） |
 | `tcpdump` | 抓包（仅 Linux/macOS） |
 
 ## 关键参数
@@ -46,7 +45,6 @@ netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcp
 ./netdiag ws -u wss://example.com                    # WebSocket 握手
 ./netdiag all -t www.qq.com,www.baidu.com -j 5       # 多目标并发
 ./netdiag batch -f tasks.txt -j 10                   # 文件批量
-./netdiag traceroute -t www.qq.com                    # 路由追踪
 sudo ./netdiag tcpdump -t www.qq.com -p 443          # 抓包（需 root）
 ```
 

@@ -16,7 +16,7 @@ import (
 
 // task 表示一个待执行的探测任务，各字段覆盖 ping/dns/telnet/curl 所需参数。
 type task struct {
-	command   string // 子命令: ping / dns / telnet / curl / ws / traceroute / all / tcpdump
+	command   string // 子命令: ping / dns / telnet / curl / ws / all / tcpdump
 	target    string // 目标主机 / IP
 	port      string // 目标端口
 	url       string // curl 探测 URL
@@ -116,8 +116,6 @@ func executeTask(w io.Writer, t task) {
 		}
 	case "ws":
 		runWebSocket(w, t.url, timeoutDur)
-	case "traceroute":
-		runTraceroute(w, t.target)
 	case "tcpdump":
 		runTcpdump(w, t.target, t.port, t.count)
 	}

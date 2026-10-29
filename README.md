@@ -11,7 +11,6 @@
 | `telnet`  | TCP 端口连通性探测 + `nc` 交叉验证       | Go 标准库 + `nc`        |
 | `curl`    | HTTP/HTTPS 探测（默认 `-I -k -v`）       | 系统 `curl`             |
 | `ws`      | WebSocket 握手探测（ws/wss，不保持长连接） | Go 标准库                 |
-| `traceroute` | 路由路径追踪                            | 系统 `traceroute`/`tracert` |
 | `tcpdump` | 抓取指定域名端口的包（仅 Linux/macOS）     | 系统 `tcpdump`          |
 
 ## 目录结构
@@ -27,7 +26,6 @@ netdiag/
 ├── output.go                        结果文件写入封装
 ├── ping.go / dns.go / telnet.go     连通性 / 解析 / 端口探测
 ├── curl.go / ws.go / capture.go     HTTP / WebSocket / 抓包
-├── traceroute.go                    路由追踪
 └── README.md                        使用说明
 ```
 
@@ -64,7 +62,6 @@ go build -o netdiag .
 ./netdiag ws -u wss://example.com                    # WebSocket
 ./netdiag all -t www.qq.com,www.baidu.com -j 5       # 多目标并发
 ./netdiag batch -f tasks.txt -j 10                   # 文件批量
-./netdiag traceroute -t www.qq.com                   # 路由追踪
 sudo ./netdiag tcpdump -t www.qq.com -p 443          # 抓包
 ```
 
