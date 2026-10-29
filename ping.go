@@ -136,4 +136,7 @@ func runPing(w io.Writer, host string, count, timeoutSec int) {
 	}
 
 	fmt.Printf("[ping] 目标 %s 测试完成\n", host)
+
+	// ping 后自动携带 traceroute 路由追踪，验证到达路径
+	runTraceroute(w, host)
 }

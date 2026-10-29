@@ -11,7 +11,7 @@ import (
 
 // runTraceroute 执行路由追踪，输出源到目标的每一跳路径信息。
 func runTraceroute(w io.Writer, host string) {
-	section(w, "7. TRACEROUTE 路由追踪")
+	section(w, "1.1 TRACEROUTE 路由追踪")
 	line(w, "目标主机: %s", host)
 
 	bin, args := buildTracerouteCommand(host)

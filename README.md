@@ -6,7 +6,7 @@
 
 | 功能        | 说明                                       | 依赖                      |
 | ----------- | ------------------------------------------ | ------------------------- |
-| `ping`    | 发送 ICMP 包，统计连通性与丢包率           | 系统 `ping`             |
+| `ping`    | 发送 ICMP 包统计连通性与丢包率，自动携带 traceroute 验证路径 | 系统 `ping`/`traceroute` |
 | `dns`     | `dig` + `nslookup` + 本地解析摘要      | 系统 `dig`/`nslookup` |
 | `telnet`  | TCP 端口连通性探测 + `nc` 交叉验证       | Go 标准库 + `nc`        |
 | `curl`    | HTTP/HTTPS 探测（默认 `-I -k -v`）       | 系统 `curl`             |

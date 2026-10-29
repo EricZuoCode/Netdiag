@@ -17,7 +17,7 @@ netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcp
 
 | 命令 | 用途 |
 | --- | --- |
-| `ping` | ping 连通性测试，统计丢包率与 RTT |
+| `ping` | ping 连通性测试（统计丢包率/RTT），并自动携带 traceroute 验证路径 |
 | `dns` | DNS 解析探测（dig + nslookup） |
 | `telnet` | TCP 端口连通性探测 |
 | `curl` | HTTP/HTTPS 探测（默认 `-I -k -v`） |
