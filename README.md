@@ -1,6 +1,6 @@
 # netdiag — CDN 场景网络基础排障工具
 
-基于 Go 的命令行工具，封装客户端系统命令，用于 CDN 网络排障。支持 ping / dns / telnet / curl / WebSocket（ws/wss）握手探测 / traceroute 路由追踪 / tcpdump 抓包，结果按 unix 时间戳输出到独立 txt 文件。
+基于 Go 的命令行工具，封装客户端系统命令，用于 CDN 网络排障。支持 ping（自动携带 traceroute 路由追踪）/ dns / telnet / curl / WebSocket（ws/wss）握手探测 / tcpdump 抓包，结果按 unix 时间戳输出到独立 txt 文件。
 
 ## 功能
 
@@ -24,7 +24,7 @@ netdiag/
 ├── main.go                          入口、参数解析、子命令分发
 ├── batch.go                         任务模型、文件解析、并发调度
 ├── output.go                        结果文件写入封装
-├── ping.go / dns.go / telnet.go     连通性 / 解析 / 端口探测
+├── ping.go / dns.go / telnet.go     连通性（含 traceroute）/ 解析 / 端口探测
 ├── curl.go / ws.go / capture.go     HTTP / WebSocket / 抓包
 └── README.md                        使用说明
 ```
@@ -55,7 +55,7 @@ go build -o netdiag .
 ```bash
 ./netdiag all                                        # 自检（含 ws）
 ./netdiag all -t www.qq.com -p 443                   # 指定目标全部探测
-./netdiag ping -t 1.2.3.4 -c 20                      # ping
+./netdiag ping -t 1.2.3.4 -c 20                      # ping（自动含 traceroute）
 ./netdiag dns -t www.qq.com                          # DNS
 ./netdiag telnet -t 1.2.3.4 -p 8080                  # 端口
 ./netdiag curl -u https://example.com                # HTTP

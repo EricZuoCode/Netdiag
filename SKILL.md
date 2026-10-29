@@ -1,12 +1,12 @@
 ---
 name: netdiag
-description: CDN 场景网络基础排障工具。当需要执行 ping 连通性测试、DNS 解析探测（dig/nslookup）、TCP 端口连通性探测、HTTP/HTTPS 探测（curl）、WebSocket 握手探测（ws/wss）或 tcpdump 抓包时使用此技能。工具封装客户端系统命令，支持多目标并发与文件批量导入，结果按 unix 时间戳输出到独立 txt 文件。不适用于带宽测速与业务层排障。
+description: CDN 场景网络基础排障工具。当需要执行 ping 连通性测试（自动携带 traceroute 路由追踪）、DNS 解析探测（dig/nslookup）、TCP 端口连通性探测、HTTP/HTTPS 探测（curl）、WebSocket 握手探测（ws/wss）或 tcpdump 抓包时使用此技能。工具封装客户端系统命令，支持多目标并发与文件批量导入，结果按 unix 时间戳输出到独立 txt 文件。不适用于带宽测速与业务层排障。
 agent_created: true
 ---
 
 # Netdiag — CDN 网络基础排障工具
 
-netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcpdump）的 Go 命令行工具，用于 CDN 网络排障。
+netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcpdump / traceroute）的 Go 命令行工具，用于 CDN 网络排障。
 
 ## 前置准备
 
@@ -51,6 +51,7 @@ sudo ./netdiag tcpdump -t www.qq.com -p 443          # 抓包（需 root）
 ## 结果解读
 
 - ping 丢失占比：`0%` 正常；`<100%` 部分丢包（存在网络波动）；`100%` 完全不可达。RTT 为往返时延（min/avg/max）。
+- traceroute 每一跳显示中间路由节点与延迟，`*` 表示该跳未响应（常见于防火墙屏蔽）。
 - 常见失败原因：DNS 解析失败、目标端口未监听（telnet 失败）、服务端不支持 WebSocket（ws 非 101）、curl 非零退出码（4xx/5xx 或证书问题）。
 
 ## 注意事项
