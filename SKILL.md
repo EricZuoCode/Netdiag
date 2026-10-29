@@ -1,6 +1,6 @@
 ---
 name: netdiag
-description: CDN 场景网络基础排障工具。当需要执行 ping 连通性测试、DNS 解析探测（dig/nslookup）、TCP 端口连通性探测、HTTP/HTTPS 探测（curl）、WebSocket 握手探测（ws/wss）或 tcpdump 抓包时使用此技能。工具封装客户端系统命令，支持多目标并发与文件批量导入，结果按 unix 时间戳输出到独立 txt 文件。不适用于路由路径追踪（traceroute）、带宽测速与业务层排障。
+description: CDN 场景网络基础排障工具。当需要执行 ping 连通性测试、DNS 解析探测（dig/nslookup）、TCP 端口连通性探测、HTTP/HTTPS 探测（curl）、WebSocket 握手探测（ws/wss）或 tcpdump 抓包时使用此技能。工具封装客户端系统命令，支持多目标并发与文件批量导入，结果按 unix 时间戳输出到独立 txt 文件。不适用于带宽测速与业务层排障。
 agent_created: true
 ---
 
@@ -11,7 +11,7 @@ netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcp
 ## 前置准备
 
 - 获取工具：在技能目录执行 `go build -o netdiag .` 构建，或从 GitHub Release 下载对应平台二进制。
-- 系统依赖：`dig`/`nslookup`/`curl`/`nc` 需系统安装；`nc` 缺失时自动跳过交叉验证，不影响主流程。
+- 系统依赖：`dig`/`nslookup`/`curl`/`nc`/`traceroute`（Windows 为 `tracert`）需系统安装；`nc` 缺失时自动跳过交叉验证，不影响主流程。
 
 ## 功能
 
@@ -24,6 +24,7 @@ netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcp
 | `ws` | WebSocket 握手探测（ws/wss，不保持长连接） |
 | `all` | ping → dns → telnet → curl；自检含 ws，带参数 http/ws 二选一 |
 | `batch` | 从文件批量导入任务并发执行 |
+| `traceroute` | 路由路径追踪（traceroute / tracert） |
 | `tcpdump` | 抓包（仅 Linux/macOS） |
 
 ## 关键参数
@@ -45,6 +46,7 @@ netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcp
 ./netdiag ws -u wss://example.com                    # WebSocket 握手
 ./netdiag all -t www.qq.com,www.baidu.com -j 5       # 多目标并发
 ./netdiag batch -f tasks.txt -j 10                   # 文件批量
+./netdiag traceroute -t www.qq.com                    # 路由追踪
 sudo ./netdiag tcpdump -t www.qq.com -p 443          # 抓包（需 root）
 ```
 

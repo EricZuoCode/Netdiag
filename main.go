@@ -27,14 +27,15 @@ var (
 
 // validCommands 记录所有合法子命令。
 var validCommands = map[string]bool{
-	"ping":    true,
-	"dns":     true,
-	"telnet":  true,
-	"curl":    true,
-	"ws":      true,
-	"all":     true,
-	"batch":   true,
-	"tcpdump": true,
+	"ping":       true,
+	"dns":        true,
+	"telnet":     true,
+	"curl":       true,
+	"ws":         true,
+	"traceroute": true,
+	"all":        true,
+	"batch":      true,
+	"tcpdump":    true,
 }
 
 func init() {
@@ -108,6 +109,7 @@ func usage() {
   telnet    执行端口连通性探测
   curl      执行 HTTP/HTTPS 探测
   ws        执行 WebSocket 握手探测（ws/wss）
+  traceroute 执行路由路径追踪
   all       按顺序执行 ping -> dns -> telnet -> curl
   batch     从文件导入任务并并发执行
   tcpdump   执行抓包操作（仅 Linux/macOS，需指定域名与端口）
@@ -119,6 +121,7 @@ func usage() {
   netdiag telnet -t 1.2.3.4 -p 8080
   netdiag curl -u https://example.com/path
   netdiag ws -u wss://example.com
+  netdiag traceroute -t www.qq.com
   netdiag all -t www.qq.com -p 80 -u http://www.qq.com
   netdiag tcpdump -t www.qq.com -p 443
 

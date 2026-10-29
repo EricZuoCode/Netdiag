@@ -1,17 +1,18 @@
 # netdiag — CDN 场景网络基础排障工具
 
-基于 Go 的命令行工具，封装客户端系统命令，用于 CDN 网络排障。支持 ping / dns / telnet / curl / WebSocket（ws/wss）握手探测 / tcpdump 抓包，结果按 unix 时间戳输出到独立 txt 文件。
+基于 Go 的命令行工具，封装客户端系统命令，用于 CDN 网络排障。支持 ping / dns / telnet / curl / WebSocket（ws/wss）握手探测 / traceroute 路由追踪 / tcpdump 抓包，结果按 unix 时间戳输出到独立 txt 文件。
 
 ## 功能
 
-| 功能 | 说明 | 依赖 |
-| --- | --- | --- |
-| `ping` | 发送 ICMP 包，统计连通性与丢包率 | 系统 `ping` |
-| `dns` | `dig` + `nslookup` + 本地解析摘要 | 系统 `dig`/`nslookup` |
-| `telnet` | TCP 端口连通性探测 + `nc` 交叉验证 | Go 标准库 + `nc` |
-| `curl` | HTTP/HTTPS 探测（默认 `-I -k -v`） | 系统 `curl` |
-| `ws` | WebSocket 握手探测（ws/wss，不保持长连接） | Go 标准库 |
-| `tcpdump` | 抓取指定域名端口的包（仅 Linux/macOS） | 系统 `tcpdump` |
+| 功能        | 说明                                       | 依赖                      |
+| ----------- | ------------------------------------------ | ------------------------- |
+| `ping`    | 发送 ICMP 包，统计连通性与丢包率           | 系统 `ping`             |
+| `dns`     | `dig` + `nslookup` + 本地解析摘要      | 系统 `dig`/`nslookup` |
+| `telnet`  | TCP 端口连通性探测 + `nc` 交叉验证       | Go 标准库 + `nc`        |
+| `curl`    | HTTP/HTTPS 探测（默认 `-I -k -v`）       | 系统 `curl`             |
+| `ws`      | WebSocket 握手探测（ws/wss，不保持长连接） | Go 标准库                 |
+| `traceroute` | 路由路径追踪                            | 系统 `traceroute`/`tracert` |
+| `tcpdump` | 抓取指定域名端口的包（仅 Linux/macOS）     | 系统 `tcpdump`          |
 
 ## 目录结构
 
@@ -26,6 +27,7 @@ netdiag/
 ├── output.go                        结果文件写入封装
 ├── ping.go / dns.go / telnet.go     连通性 / 解析 / 端口探测
 ├── curl.go / ws.go / capture.go     HTTP / WebSocket / 抓包
+├── traceroute.go                    路由追踪
 └── README.md                        使用说明
 ```
 
@@ -37,18 +39,18 @@ go build -o netdiag .
 
 ## 参数说明
 
-| 参数 | 说明 | 默认值 |
-| --- | --- | --- |
-| `-t, --target` | 目标主机/IP，逗号分隔多个，可携带 http(s):// | `www.qq.com` |
-| `-p, --port` | 端口 | `443` |
-| `-u, --url` | curl/ws 探测 URL | 按端口推导（80→http/ws，其余→https/wss） |
-| `-c, --count` | ping 发包数 / tcpdump 抓包数 | `10`（tcpdump 100） |
-| `-W, --timeout` | 超时（秒） | `5` |
-| `-o, --output` | 结果文件路径 | `<unix时间戳>-netdiag-output.txt` |
-| `-C, --curl-flags` | curl 参数 | `-I -k -v` |
-| `-T, --clean` | 运行前清理历史输出文件 | 关闭 |
-| `-f, --file` | 任务文件（batch） | 无 |
-| `-j, --jobs` | 并发上限 | `10` |
+| 参数                 | 说明                                         | 默认值                                     |
+| -------------------- | -------------------------------------------- | ------------------------------------------ |
+| `-t, --target`     | 目标主机/IP，逗号分隔多个，可携带 http(s):// | `www.qq.com`                             |
+| `-p, --port`       | 端口                                         | `443`                                    |
+| `-u, --url`        | curl/ws 探测 URL                             | 按端口推导（80→http/ws，其余→https/wss） |
+| `-c, --count`      | ping 发包数 / tcpdump 抓包数                 | `10`（tcpdump 100）                      |
+| `-W, --timeout`    | 超时（秒）                                   | `5`                                      |
+| `-o, --output`     | 结果文件路径                                 | `<unix时间戳>-netdiag-output.txt`        |
+| `-C, --curl-flags` | curl 参数                                    | `-I -k -v`                               |
+| `-T, --clean`      | 运行前清理历史输出文件                       | 关闭                                       |
+| `-f, --file`       | 任务文件（batch）                            | 无                                         |
+| `-j, --jobs`       | 并发上限                                     | `10`                                     |
 
 ## 使用
 
@@ -62,6 +64,7 @@ go build -o netdiag .
 ./netdiag ws -u wss://example.com                    # WebSocket
 ./netdiag all -t www.qq.com,www.baidu.com -j 5       # 多目标并发
 ./netdiag batch -f tasks.txt -j 10                   # 文件批量
+./netdiag traceroute -t www.qq.com                   # 路由追踪
 sudo ./netdiag tcpdump -t www.qq.com -p 443          # 抓包
 ```
 
@@ -80,5 +83,5 @@ dns -t www.taobao.com
 ## 注意事项
 
 - `tcpdump` 仅 Linux/macOS，需 root（`sudo`），串行执行；Windows 用 Wireshark。
-- `dig`/`nslookup`/`curl`/`nc` 需系统安装，`nc` 缺失自动跳过。
+- `dig`/`nslookup`/`curl`/`nc`/`traceroute`（Windows 为 `tracert`）需系统安装，`nc` 缺失自动跳过。
 - `-T` 会删除当前目录所有 `*-netdiag-output.txt`，请确认后再用。
