@@ -39,6 +39,7 @@ netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcp
 ## 常用示例
 
 ```bash
+./netdiag                                            # 直接运行（不带命令）默认执行 all 自检
 ./netdiag all -t www.qq.com -p 443                  # 全部探测
 ./netdiag dns -t www.qq.com                          # DNS 解析
 ./netdiag curl -u https://example.com                # HTTP 探测
