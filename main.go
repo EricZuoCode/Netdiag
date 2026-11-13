@@ -247,9 +247,9 @@ func main() {
 	defer w.Close()
 
 	w.runHeader(strings.Join(os.Args, " "))
+	// 参数说明写入结果文件开头，提示一次
+	fmt.Fprint(w, paramHelp())
 	runTasksConcurrently(w, tasks, jobs)
 
 	fmt.Printf("\n结果已写入: %s（共 %d 个任务）\n", output, len(tasks))
-	// 参数说明仅在终端末尾输出一次，避免直接关闭窗口看不到提示
-	fmt.Print(paramHelp())
 }
