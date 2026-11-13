@@ -249,10 +249,7 @@ func main() {
 	w.runHeader(strings.Join(os.Args, " "))
 	runTasksConcurrently(w, tasks, jobs)
 
-	// 结果文件末尾附加参数说明，方便用户查看工具用法
-	fmt.Fprint(w, paramHelp())
-
 	fmt.Printf("\n结果已写入: %s（共 %d 个任务）\n", output, len(tasks))
-	// 终端同步输出参数说明，避免用户直接关闭窗口看不到提示
+	// 参数说明仅在终端末尾输出一次，避免直接关闭窗口看不到提示
 	fmt.Print(paramHelp())
 }
