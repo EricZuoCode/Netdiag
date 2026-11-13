@@ -171,10 +171,12 @@ func paramHelp() string {
 func main() {
 	flag.Usage = usage // 设置帮助信息
 
-	// 默认命令：不带任何参数时直接执行 all 自检（信息收集），无需显式输入 all
+	// 是否直接执行（不带任何参数）：此时默认执行 all 自检（信息收集），无需显式输入 all
+	isDefaultAll := len(os.Args) < 2
+
 	command := "all"
 	flagArgs := os.Args[1:]
-	if len(os.Args) >= 2 {
+	if !isDefaultAll {
 		command = os.Args[1]   // 第一个参数为命令名称
 		flagArgs = os.Args[2:] // 其余为命令参数
 	}
@@ -247,8 +249,10 @@ func main() {
 	defer w.Close()
 
 	w.runHeader(strings.Join(os.Args, " "))
-	// 参数说明写入结果文件开头，提示一次
-	fmt.Fprint(w, paramHelp())
+	// 仅直接执行（默认 all 自检）时，在结果文件开头写入参数说明一次
+	if isDefaultAll {
+		fmt.Fprint(w, paramHelp())
+	}
 	runTasksConcurrently(w, tasks, jobs)
 
 	fmt.Printf("\n结果已写入: %s（共 %d 个任务）\n", output, len(tasks))
