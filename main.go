@@ -249,10 +249,8 @@ func main() {
 	defer w.Close()
 
 	w.runHeader(strings.Join(os.Args, " "))
-	// 仅直接执行（默认 all 自检）时，在结果文件开头写入参数说明一次
-	if isDefaultAll {
-		fmt.Fprint(w, paramHelp())
-	}
+	// 只要导出 txt 结果，就在结果文件开头写入一次参数说明
+	fmt.Fprint(w, paramHelp())
 	runTasksConcurrently(w, tasks, jobs)
 
 	fmt.Printf("\n结果已写入: %s（共 %d 个任务）\n", output, len(tasks))
