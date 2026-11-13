@@ -147,15 +147,38 @@ func usage() {
 `)
 }
 
+// paramHelp 返回参数说明文本，追加在执行结果末尾，方便用户查看工具用法，避免直接关闭窗口无提示。
+func paramHelp() string {
+	return `
+==================== 参数说明 ====================
+用法: netdiag <command> [flags]   （不带命令时默认执行 all 自检）
+
+命令: ping | dns | telnet | curl | ws | all | batch | tcpdump
+
+参数:
+  -t, --target     目标主机 / IP，逗号分隔多个（默认 www.qq.com）
+  -p, --port       目标端口（默认 443）
+  -u, --url        curl/ws 探测 URL（默认按端口推导协议）
+  -c, --count      ping 发包数 / tcpdump 抓包数（默认 10）
+  -o, --output     结果输出文件路径（默认 <时间戳>-netdiag-output.txt）
+  -j, --jobs       并发任务数上限（默认 10）
+  -T, --clean      运行前清理历史输出文件
+  -f, --file       任务文件路径（batch 使用）
+  -C, --curl-flags curl 参数（默认 -I -k -v）
+`
+}
+
 func main() {
 	flag.Usage = usage // 设置帮助信息
 
-	if len(os.Args) < 2 { // 如果没有命令行参数，则打印帮助信息
-		usage()
-		os.Exit(1)
+	// 默认命令：不带任何参数时直接执行 all 自检（信息收集），无需显式输入 all
+	command := "all"
+	flagArgs := os.Args[1:]
+	if len(os.Args) >= 2 {
+		command = os.Args[1]   // 第一个参数为命令名称
+		flagArgs = os.Args[2:] // 其余为命令参数
 	}
-	command := os.Args[1]               // 获取命令行参数中的第一个参数，即命令名称
-	flag.CommandLine.Parse(os.Args[2:]) // 解析命令行第二个参数及其后续参数
+	flag.CommandLine.Parse(flagArgs)
 
 	if !validCommands[command] { // 检查第一个参数命令是否合法
 		fmt.Fprintf(os.Stderr, "错误: 未知命令 %q\n\n", command)
@@ -226,5 +249,10 @@ func main() {
 	w.runHeader(strings.Join(os.Args, " "))
 	runTasksConcurrently(w, tasks, jobs)
 
+	// 结果文件末尾附加参数说明，方便用户查看工具用法
+	fmt.Fprint(w, paramHelp())
+
 	fmt.Printf("\n结果已写入: %s（共 %d 个任务）\n", output, len(tasks))
+	// 终端同步输出参数说明，避免用户直接关闭窗口看不到提示
+	fmt.Print(paramHelp())
 }
