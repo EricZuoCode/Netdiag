@@ -159,12 +159,15 @@ func runTraceroute(w io.Writer, host string) {
 	fmt.Printf("[traceroute] 目标 %s 路由追踪完成\n", host)
 }
 
-// buildTracerouteCommand 根据操作系统构造路由追踪命令：Windows 用 tracert，其余用 traceroute。
+// buildTracerouteCommand 根据操作系统构造路由追踪命令，并限制跳数与超时，避免对公网目标执行过久：
+// Windows 用 tracert，其余用 traceroute。
 func buildTracerouteCommand(host string) (string, []string) {
 	switch runtime.GOOS {
 	case "windows":
-		return "tracert", []string{host}
+		// tracert -h 最大跳数 -w 每跳超时(毫秒)
+		return "tracert", []string{"-h", "15", "-w", "2000", host}
 	default:
-		return "traceroute", []string{host}
+		// traceroute -m 最大跳数 -w 每探测超时(秒) -q 每跳探测数
+		return "traceroute", []string{"-m", "15", "-w", "2", "-q", "1", host}
 	}
 }
