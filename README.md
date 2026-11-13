@@ -53,7 +53,8 @@ go build -o netdiag .
 ## 使用
 
 ```bash
-./netdiag all                                        # 自检（含 ws）
+./netdiag                                            # 直接运行（不带命令）默认执行 all 自检
+./netdiag all                                        # 显式执行 all（含 ws）
 ./netdiag all -t www.qq.com -p 443                   # 指定目标全部探测
 ./netdiag ping -t 1.2.3.4 -c 20                      # ping（自动含 traceroute）
 ./netdiag dns -t www.qq.com                          # DNS
@@ -75,7 +76,7 @@ dns -t www.taobao.com
 
 ## 输出
 
-结果追加写入 `<unix时间戳>-netdiag-output.txt`，多任务以 `<<<<<< 任务 N/M >>>>>>` 分隔；抓包产物为 `<unix时间戳>-netdiag-tcpdump.pcap`。
+结果写入 `<unix时间戳>-netdiag-output.txt`（开头附参数说明），多任务以 `<<<<<< 任务 N/M >>>>>>` 分隔；抓包产物为 `<unix时间戳>-netdiag-tcpdump.pcap`。
 
 ## 注意事项
 

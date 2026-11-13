@@ -6,7 +6,7 @@ agent_created: true
 
 # Netdiag — CDN 网络基础排障工具
 
-netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcpdump / traceroute）的 Go 命令行工具，用于 CDN 网络排障。
+netdiag 是封装客户端系统命令（ping / dig / nslookup / nc / curl / tcpdump / traceroute）的 Go 命令行工具，用于 CDN 网络排障。直接运行（不带命令）默认执行 all 自检。
 
 ## 前置准备
 
@@ -58,4 +58,4 @@ sudo ./netdiag tcpdump -t www.qq.com -p 443          # 抓包（需 root）
 
 - ⚠️ `-T/--clean` 会删除当前目录下全部 `*-netdiag-output.txt` 文件，执行前须经用户确认，避免误删。
 - `tcpdump` 仅 Linux/macOS，需 root（`sudo`）、串行执行；Windows 用 Wireshark。
-- 结果写入 `<unix时间戳>-netdiag-output.txt`；抓包产物 `<unix时间戳>-netdiag-tcpdump.pcap`。
+- 结果写入 `<unix时间戳>-netdiag-output.txt`（开头附参数说明）；抓包产物 `<unix时间戳>-netdiag-tcpdump.pcap`。
