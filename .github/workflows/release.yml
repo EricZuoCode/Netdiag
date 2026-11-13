@@ -27,8 +27,6 @@ jobs:
             arch: amd64
           - os: windows
             arch: arm64
-          - os: windows
-            arch: '386'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
